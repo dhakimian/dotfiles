@@ -14,7 +14,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-call plug#begin('~/.vim/bundle')
+call plug#begin()
 
 " let Vundle manage Vundle, required
 "Plugin 'VundleVim/Vundle.vim'
@@ -27,12 +27,16 @@ Plug 'tpope/vim-repeat'
 "Plug 'hhvm/vim-hack'
 Plug 'vim-perl/vim-perl', { 'for': 'perl' }
 Plug 'vim-scripts/dbext.vim'
-"Plug 'Townk/vim-autoclose'
-"Plug 'Shougo/neocomplete.vim'
-"Plug 'Shougo/neosnippet'
-"Plug 'Shougo/neosnippet-snippets'
+Plug 'dhakimian/vim-autoclose'
+"Plug 'lifepillar/vim-mucomplete'
+"Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+"Plug 'prabirshrestha/asyncomplete-lsp.vim'
+"Plug 'prabirshrestha/asyncomplete-buffer.vim'
 if (has('python') || has('python3'))
     Plug 'SirVer/ultisnips'
+    "Plug 'prabirshrestha/asyncomplete-ultisnips.vim'
 else
     Plug 'garbas/vim-snipmate'
     Plug 'MarcWeber/vim-addon-mw-utils' "required for snipmate
@@ -54,6 +58,7 @@ catch /^Vim\%((\a\+)\)\=:E185/
 endtry
 runtime! macros/matchit.vim
 set omnifunc=syntaxcomplete#Complete
+set completefunc=functions#UltiSnipsComplete
 set copyindent
 set timeoutlen=250
 set ttimeoutlen=10
@@ -79,11 +84,18 @@ set showcmd
 set nostartofline
 noremap <F1> <nop>
 noremap K <nop>
+nn <silent> K :LspHover<CR>
+nn <silent> ]e :LspNextError<CR>
+nn <silent> ]r :LspNextReference<CR>
+nn <silent> [e :LspPreviousError<CR>
+nn <silent> [r :LspPreviousReference<CR>
 set pastetoggle=<F2>
 nn <Tab> gt
 nn <S-Tab> gT
 no Y y$
+"for vim-surround
 nmap S ys
+
 if !has('nvim')
 	set viminfo='10,\"100,:20,%,n~/.viminfo
 endif
@@ -106,15 +118,34 @@ vn K k
 "restore ability to do multi-line Joins of all visually selected lines
 vn <Leader>J J
 
-"let g:AutoClosePumvisible = {"ENTER": "\<C-Y>", "ESC": ""}
-"let g:AutoClosePairs_del = "{"
+let g:AutoCloseProtectedRegions = ["Comment", "Character"]
 
 let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 let g:UltiSnipsExpandTrigger = '<tab>'
 let g:UltiSnipsJumpForwardTrigger = '<c-j>'
 let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
+"let g:UltiSnipsJumpForwardTrigger = '<tab>'
+"let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 "let g:UltiSnipsListSnippets = ''
 let g:UltiSnipsEditSplit = 'tabdo'
+
+let g:lsp_virtual_text_enabled = 0
+let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_signs_enabled = 1
+let g:lsp_signs_error = {'text': '✗'}
+let g:lsp_signs_warning = {'text': '‼'}
+"let g:lsp_signs_hint = {'text': '💡'}
+
+"let g:asyncomplete_auto_popup = 0
+"imap <c-n> <Plug>(asyncomplete_force_refresh)
+
+"let g:mucomplete#chains = {
+"    \ 'default' : ['omni', 'ulti', 'keyn', 'c-n', 'dict', 'uspl'],
+"    \ 'vim'     : ['cmd',  'ulti', 'keyn', 'c-n']
+"    \ }
+"imap <c-n> <plug>(MUcompleteFwd)
+"imap <c-p> <plug>(MUcompleteBwd)
+
 
 " Return the cursor to the position it was in when the buffer was last closed
 function! ResCur()
@@ -147,8 +178,44 @@ if has("autocmd")
         au BufRead,BufNewFile *.md set filetype=markdown
         let g:xml_syntax_folding=1
         au FileType xml setlocal foldmethod=syntax
+
+        "TODO: separate things out to ftplugin/*.vim files
+        if executable('intelephense')
+            au User lsp_setup call lsp#register_server({
+                \ 'name': 'intelephense',
+                \ 'cmd': {server_info->['node', expand('/opt/local/lib/node_modules/intelephense/lib/intelephense.js'), '--stdio']},
+                \ 'initialization_options': {"storagePath": "/tmp/intelephense"},
+                \ 'whitelist': ['php'],
+                \ })
+            "au FileType php setlocal omnifunc=lsp#complete
+        endif
+        if executable('bash-language-server')
+            au User lsp_setup call lsp#register_server({
+                \ 'name': 'bash-language-server',
+                \ 'cmd': {server_info->[&shell, &shellcmdflag, 'bash-language-server start']},
+                \ 'whitelist': ['sh'],
+                \ })
+            au FileType sh setlocal omnifunc=lsp#complete
+        endif
+
+        "call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+        "    \ 'name': 'buffer',
+        "    \ 'whitelist': ['*'],
+        "    \ 'blacklist': ['go'],
+        "    \ 'completor': function('asyncomplete#sources#buffer#completor'),
+        "    \ }))
+        "
+        "if (has('python') || has('python3'))
+        "    call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
+        "        \ 'name': 'ultisnips',
+        "        \ 'whitelist': ['*'],
+        "        \ 'completor': function('asyncomplete#sources#ultisnips#completor'),
+        "        \ }))
+        "endif
+
     endif
 endif
 
 
-inoremap {<CR> {<CR>}<Esc>O
+"inoremap {<CR> {<CR>}<Esc>O
+"inoremap <silent> <expr> <CR> (pumvisible() ? "\<C-Y>" : "\<CR>")
