@@ -1,6 +1,6 @@
 " Vim color file
 " Maintainer:   Daniel Hakimian <dhakimian@nwss.co>
-" Last Change:  2018-02-15
+" Last Change:  2022-01-26
 
 set t_Co=256
 highlight clear
@@ -43,7 +43,8 @@ if &bg == "light"
     hi   Comment      cterm=None       ctermfg=245   ctermbg=None
    "hi   MatchParen   cterm=None       ctermfg=None  ctermbg=254
     hi   MatchParen   cterm=bold       ctermfg=0     ctermbg=254
-    hi   LineNr       cterm=None       ctermfg=242   ctermbg=255
+   "hi   LineNr       cterm=None       ctermfg=242   ctermbg=255
+    hi   LineNr       cterm=None       ctermfg=245   ctermbg=254
     hi   Constant     cterm=None       ctermfg=124   ctermbg=None
    "hi   Constant     cterm=None       ctermfg=160   ctermbg=None
     hi   String       cterm=None       ctermfg=28    ctermbg=None
@@ -141,6 +142,18 @@ endif
 " Nice spaced out format courtesy of the column utility
 " Select the lines in Visual mode and type this command:
 " :'<,'>!column -t
+
+" LSP highlighting (Same colors work for both light and dark schemes)
+hi  LspReference         cterm=underline  ctermfg=None  ctermbg=None
+hi  LspErrorHighlight    cterm=None       ctermfg=231   ctermbg=196
+hi  LspErrorText         cterm=None       ctermfg=231   ctermbg=196
+hi  LspWarningHighlight  cterm=None       ctermfg=16    ctermbg=208
+hi  LspWarningText       cterm=None       ctermfg=16    ctermbg=208
+hi  LspHintHighlight     cterm=None       ctermfg=None  ctermbg=159
+hi  LspHintText          cterm=None       ctermfg=None  ctermbg=159
+"hi LspInformationHighlight
+"hi LspInformationText
+
 
 "hi Cursor		
 "hi CursorIM	
