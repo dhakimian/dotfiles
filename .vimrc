@@ -28,13 +28,9 @@ Plug 'tpope/vim-repeat'
 Plug 'vim-perl/vim-perl', { 'for': 'perl' }
 Plug 'vim-scripts/dbext.vim'
 Plug 'dhakimian/vim-autoclose'
-"Plug 'lifepillar/vim-mucomplete'
-"Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-"Plug 'prabirshrestha/asyncomplete-lsp.vim'
-"Plug 'prabirshrestha/asyncomplete-buffer.vim'
-"Plug 'felixfbecker/php-language-server', {'do': 'composer install && composer run-script parse-stubs'}
+Plug 'neovim/nvim-lspconfig'
+Plug 'ray-x/lsp_signature.nvim'
+Plug 'RRethy/vim-illuminate'
 if (has('python') || has('python3'))
     Plug 'SirVer/ultisnips'
     "Plug 'prabirshrestha/asyncomplete-ultisnips.vim'
@@ -61,6 +57,7 @@ catch /^Vim\%((\a\+)\)\=:E185/
 endtry
 com! JSONFormat %!python3 -m json.tool
 runtime! macros/matchit.vim
+"omnifunc will be overridden by LSP completion function if present
 set omnifunc=syntaxcomplete#Complete
 set completefunc=functions#UltiSnipsComplete
 set copyindent
@@ -89,11 +86,14 @@ set showcmd
 set nostartofline
 noremap <F1> <nop>
 noremap K <nop>
-nn <silent> K :LspHover<CR>
-nn <silent> ]e :LspNextError<CR>
-nn <silent> ]r :LspNextReference<CR>
-nn <silent> [e :LspPreviousError<CR>
-nn <silent> [r :LspPreviousReference<CR>
+"nn <silent> K :LspHover<CR>
+"nn <silent> ]e :LspNextError<CR>
+"nn <silent> ]r :LspNextReference<CR>
+"nn <silent> [e :LspPreviousError<CR>
+"nn <silent> [r :LspPreviousReference<CR>
+nn <silent> ]r :lua require"illuminate".next_reference{wrap=true}<CR>
+nn <silent> [r :lua require"illuminate".next_reference{reverse=true,wrap=true}<CR>
+
 set pastetoggle=<F2>
 nn <Tab> gt
 nn <S-Tab> gT
@@ -127,6 +127,10 @@ vn <Leader>J J
 " yanked, instead of always jumping to the top.
 vn y ygv
 
+"let g:Illuminate_insert_mode_highlight = 0  "this option doesn't appear to actually work...
+"Fortunately, a short delay reduces the desire to disable highlighing in insert mode.
+let g:Illuminate_delay = 500
+
 let g:AutoCloseProtectedRegions = ["Comment", "Character"]
 
 let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
@@ -137,13 +141,14 @@ let g:UltiSnipsJumpForwardTrigger = '<tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 "let g:UltiSnipsListSnippets = ''
 let g:UltiSnipsEditSplit = 'tabdo'
+let g:snipMate = { 'snippet_version' : 1 }
 
-let g:lsp_virtual_text_enabled = 0
-let g:lsp_diagnostics_echo_cursor = 1
-let g:lsp_signs_enabled = 1
-let g:lsp_signs_error = {'text': '✗'}
-let g:lsp_signs_warning = {'text': '‼'}
-"let g:lsp_signs_hint = {'text': '💡'}
+"let g:lsp_virtual_text_enabled = 0
+"let g:lsp_diagnostics_echo_cursor = 1
+"let g:lsp_signs_enabled = 1
+"let g:lsp_signs_error = {'text': '✗'}
+"let g:lsp_signs_warning = {'text': '‼'}
+""let g:lsp_signs_hint = {'text': '💡'}
 
 "let g:asyncomplete_auto_popup = 0
 "imap <c-n> <Plug>(asyncomplete_force_refresh)
@@ -196,32 +201,10 @@ if has("autocmd")
         let g:xml_syntax_folding=1
         au FileType xml setlocal foldmethod=syntax
 
-        "TODO: separate things out to ftplugin/*.vim files
-        if executable('intelephense')
-            au User lsp_setup call lsp#register_server({
-                \ 'name': 'intelephense',
-                \ 'cmd': {server_info->['node', expand('/opt/local/lib/node_modules/intelephense/lib/intelephense.js'), '--stdio']},
-                \ 'initialization_options': {"storagePath": "/tmp/intelephense"},
-                \ 'whitelist': ['php'],
-                \ })
-            au FileType php setlocal omnifunc=lsp#complete
-        endif
-        if executable('bash-language-server')
-            au User lsp_setup call lsp#register_server({
-                \ 'name': 'bash-language-server',
-                \ 'cmd': {server_info->[&shell, &shellcmdflag, 'bash-language-server start']},
-                \ 'whitelist': ['sh'],
-                \ })
-            au FileType sh setlocal omnifunc=lsp#complete
-        endif
-        if executable('pyls')
-            au User lsp_setup call lsp#register_server({
-                \ 'name': 'pyls',
-                \ 'cmd': {server_info->['pyls']},
-                \ 'whitelist': ['python'],
-                \ })
-            au FileType python setlocal omnifunc=lsp#complete
-        endif
+        "Doing this through vim-illuminate instead
+        "autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()
+        ""autocmd CursorHoldI <buffer> lua vim.lsp.buf.document_highlight()
+        "autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
 
         "call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
         "    \ 'name': 'buffer',
@@ -241,6 +224,6 @@ if has("autocmd")
     endif
 endif
 
-
-"inoremap {<CR> {<CR>}<Esc>O
 "inoremap <silent> <expr> <CR> (pumvisible() ? "\<C-Y>" : "\<CR>")
+
+lua require('config')

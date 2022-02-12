@@ -1,6 +1,6 @@
 " Vim color file
 " Maintainer:   Daniel Hakimian <dhakimian@nwss.co>
-" Last Change:  2022-01-26
+" Last Change:  2022-02-11
 
 set t_Co=256
 highlight clear
@@ -99,10 +99,13 @@ else "bg == "dark"
    "hi   String       cterm=None       ctermfg=40    ctermbg=None
    "hi   Type         cterm=None       ctermfg=46    ctermbg=None
     hi   Type         cterm=bold       ctermfg=40    ctermbg=None
-    hi   Pmenu        cterm=None       ctermfg=233   ctermbg=225
-    hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=213
-    hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=248
-    hi   PmenuThumb   cterm=None       ctermfg=None  ctermbg=231
+   "hi   Pmenu        cterm=None       ctermfg=233   ctermbg=177
+    hi   Pmenu        cterm=None       ctermfg=233   ctermbg=141
+   "hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=219
+    hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=183
+   "hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=171
+    hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=140
+    hi   PmenuThumb   cterm=None       ctermfg=None  ctermbg=253
     hi   Function     cterm=None       ctermfg=135   ctermbg=None
     hi   Identifier   cterm=bold       ctermfg=38    ctermbg=None
     hi   Delimiter    cterm=None       ctermfg=214   ctermbg=None
@@ -143,17 +146,40 @@ endif
 " Select the lines in Visual mode and type this command:
 " :'<,'>!column -t
 
-" LSP highlighting (Same colors work for both light and dark schemes)
-hi  LspReference         cterm=underline  ctermfg=None  ctermbg=None
-hi  LspErrorHighlight    cterm=None       ctermfg=231   ctermbg=196
-hi  LspErrorText         cterm=None       ctermfg=231   ctermbg=196
-hi  LspWarningHighlight  cterm=None       ctermfg=16    ctermbg=208
-hi  LspWarningText       cterm=None       ctermfg=16    ctermbg=208
-hi  LspHintHighlight     cterm=None       ctermfg=None  ctermbg=159
-hi  LspHintText          cterm=None       ctermfg=None  ctermbg=159
-"hi LspInformationHighlight
-"hi LspInformationText
+" -- Highlight groups from old vim-lsp plugin. Keeping for reference of what colors I used --
+"" LSP highlighting (Same colors work for both light and dark schemes)
+"hi  LspReference         cterm=underline  ctermfg=None  ctermbg=None
+"hi  LspErrorHighlight    cterm=None       ctermfg=231   ctermbg=196
+"hi  LspErrorText         cterm=None       ctermfg=231   ctermbg=196
+"hi  LspWarningHighlight  cterm=None       ctermfg=16    ctermbg=208
+"hi  LspWarningText       cterm=None       ctermfg=16    ctermbg=208
+"hi  LspHintHighlight     cterm=None       ctermfg=None  ctermbg=159
+"hi  LspHintText          cterm=None       ctermfg=None  ctermbg=159
+""hi LspInformationHighlight
+""hi LspInformationText
+"------------------------
 
+"------ NeoVim builtin LSP highlight groups ------
+hi  LspReferenceText   cterm=underline  ctermfg=None  ctermbg=None
+hi  LspReferenceRead   cterm=underline  ctermfg=None  ctermbg=None
+hi  LspReferenceWrite  cterm=underline  ctermfg=None  ctermbg=235
+"hi LspSignatureActiveParameter cterm=None ctermfg=None ctermbg=255 changing this to match PmenuSel
+hi LspSignatureActiveParameter cterm=None ctermfg=None ctermbg=183
+
+"hi  DiagnosticError  ...
+hi  DiagnosticWarn   cterm=None  ctermfg=208  ctermbg=None
+"hi  DiagnosticHint   cterm=None  ctermfg=159  ctermbg=None
+"hi  DiagnosticInfo   ...
+hi  DiagnosticUnderlineError  cterm=None  ctermfg=231   ctermbg=196
+hi  DiagnosticUnderlineWarn   cterm=None  ctermfg=16    ctermbg=208
+hi  DiagnosticUnderlineHint   cterm=None  ctermfg=None  ctermbg=253
+"hi  DiagnosticUnderlineInfo
+"-------------------------------------------------
+
+" These are copied from after/syntax/php.vim, since changing the colorscheme
+" within a buffer clears these highlight groups and doesn't reset them
+hi link phpIfSingleEqual phpConditional
+hi link phpSingleEqualCondition Error
 
 "hi Cursor		
 "hi CursorIM	
