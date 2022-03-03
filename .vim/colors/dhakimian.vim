@@ -1,6 +1,6 @@
 " Vim color file
 " Maintainer:   Daniel Hakimian <dhakimian@nwss.co>
-" Last Change:  2022-02-11
+" Last Change:  2022-03-03
 
 set t_Co=256
 highlight clear
@@ -101,11 +101,9 @@ else "bg == "dark"
     hi   Type         cterm=bold       ctermfg=40    ctermbg=None
    "hi   Pmenu        cterm=None       ctermfg=233   ctermbg=177
     hi   Pmenu        cterm=None       ctermfg=233   ctermbg=141
-   "hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=219
-    hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=183
-   "hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=171
-    hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=140
-    hi   PmenuThumb   cterm=None       ctermfg=None  ctermbg=253
+    hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=189
+    hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=139
+    hi   PmenuThumb   cterm=None       ctermfg=None  ctermbg=251
     hi   Function     cterm=None       ctermfg=135   ctermbg=None
     hi   Identifier   cterm=bold       ctermfg=38    ctermbg=None
     hi   Delimiter    cterm=None       ctermfg=214   ctermbg=None
@@ -164,7 +162,7 @@ hi  LspReferenceText   cterm=underline  ctermfg=None  ctermbg=None
 hi  LspReferenceRead   cterm=underline  ctermfg=None  ctermbg=None
 hi  LspReferenceWrite  cterm=underline  ctermfg=None  ctermbg=235
 "hi LspSignatureActiveParameter cterm=None ctermfg=None ctermbg=255 changing this to match PmenuSel
-hi LspSignatureActiveParameter cterm=None ctermfg=None ctermbg=183
+hi LspSignatureActiveParameter cterm=None ctermfg=None ctermbg=189
 
 "hi  DiagnosticError  ...
 hi  DiagnosticWarn   cterm=None  ctermfg=208  ctermbg=None
