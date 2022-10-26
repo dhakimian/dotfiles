@@ -50,6 +50,8 @@
 	<false/>
 	<key>DisableFullscreenTransparency</key>
 	<false/>
+	<key>EnableAPIServer</key>
+	<true/>
 	<key>EnableRendezvous</key>
 	<false/>
 	<key>FocusFollowsMouse</key>
@@ -276,6 +278,18 @@
 			<false/>
 			<key>Background Image Location</key>
 			<string></string>
+			<key>Badge Font</key>
+			<string>Helvetica-Bold</string>
+			<key>Badge Max Height</key>
+			<real>0.10000000000000001</real>
+			<key>Badge Max Width</key>
+			<real>0.5</real>
+			<key>Badge Right Margin</key>
+			<real>10</real>
+			<key>Badge Text</key>
+			<string></string>
+			<key>Badge Top Margin</key>
+			<real>10</real>
 			<key>Blend</key>
 			<real>0.30000001192092896</real>
 			<key>Blink Allowed</key>
@@ -356,6 +370,8 @@
 			<false/>
 			<key>Horizontal Spacing</key>
 			<real>1</real>
+			<key>Icon</key>
+			<integer>0</integer>
 			<key>Idle Code</key>
 			<integer>0</integer>
 			<key>Initial Text</key>
@@ -657,6 +673,8 @@
 					<string>[1;5F</string>
 				</dict>
 			</dict>
+			<key>Load Shell Integration Automatically</key>
+			<true/>
 			<key>Log Directory</key>
 			<string></string>
 			<key>Minimum Contrast</key>
@@ -901,6 +919,19 @@
 			<string>xterm-256color</string>
 			<key>Thin Strokes</key>
 			<integer>4</integer>
+			<key>Title Components</key>
+			<integer>16</integer>
+			<key>Title Function</key>
+			<array>
+				<dict>
+					<key>value</key>
+					<string>Session/job or Git Repo/Branch</string>
+				</dict>
+				<dict>
+					<key>value</key>
+					<string>com.iterm2.example.dhakimian-title</string>
+				</dict>
+			</array>
 			<key>Transparency</key>
 			<real>0.060649879276752479</real>
 			<key>Triggers</key>
@@ -3415,7 +3446,7 @@
 	<key>SoundForEsc</key>
 	<false/>
 	<key>SplitPaneDimmingAmount</key>
-	<real>0.10997846722602844</real>
+	<real>0.2027141695925333</real>
 	<key>StealKeyFocus</key>
 	<false/>
 	<key>StretchTabsToFillBar</key>
