@@ -1,6 +1,7 @@
 
 [[ -z "$PS1" ]] && return  #Don't execute this file for non-interactive shells
 
+#Add in other completions (specifically docker completion at this time, which is symlinked from /Applications/Docker.app/Contents/Resources/etc/)
 fpath=(~/.zsh/completion /opt/local/share/zsh/site-functions $fpath)
 
 # The following lines were added by compinstall
@@ -63,7 +64,8 @@ SAVEHIST=5000
 REPORTTIME=30
 
 #export PATH="$PATH:/opt/local/bin:$HOME/bin"
-export PATH="/opt/local/bin:$PATH:$HOME/bin"
+#export PATH="/opt/local/bin:$PATH:$HOME/bin"
+export PATH="/opt/local/libexec/gnubin:/opt/local/bin:$PATH:$HOME/bin"
 
 export EDITOR=`which nvim`
 export CLICOLOR=1
@@ -87,3 +89,23 @@ alias ltr='ls -ltr'
 #alias df='df -h'
 alias t='true'
 #alias diff='colordiff'
+########################
+
+
+function mkgitline {
+	git status > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		gitRepo=$(git config --get remote.origin.url | sed -r 's/.*\/(.*)\.git/\1/')
+		gitBranch=$(git branch --show-current)
+		echo -en "$gitRepo \u2387 $gitBranch"
+	else
+		echo -n ''
+	fi
+}
+
+if [ -e "${HOME}/.iterm2_shell_integration.zsh" ]; then
+	source "${HOME}/.iterm2_shell_integration.zsh"
+	iterm2_print_user_vars() {
+		iterm2_set_user_var gitLine "$(mkgitline)"
+	}
+fi
