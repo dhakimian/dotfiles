@@ -1,13 +1,10 @@
 set nocompatible
-"execute pathogen#infect()
 
 "filetype on  " prevent vim from exiting with nonzero status for some reason
 "filetype off                  " required
-" set the runtime path to include Vundle and initialize
-"set rtp+=~/.vim/bundle/Vundle.vim
-"call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-" call vundle#begin('~/some/path/here')
+
+" Their 'sensible' settings don't seem to be very sensible for my patterns of use at least..
+let g:polyglot_disabled = ['sensible']
 
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -15,16 +12,16 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 call plug#begin()
-
-" let Vundle manage Vundle, required
-"Plugin 'VundleVim/Vundle.vim'
 Plug 'junegunn/vim-plug'
 
 Plug 'vim-scripts/camelcasemotion'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
+"Plug 'tpope/vim-dadbod'
+Plug 'dhakimian/vim-db'
 "Plug 'hhvm/vim-hack'
+"Plug 'sheerun/vim-polyglot'
 Plug 'vim-perl/vim-perl', { 'for': 'perl' }
 Plug 'vim-scripts/dbext.vim'
 Plug 'dhakimian/vim-autoclose'
@@ -33,9 +30,8 @@ Plug 'ray-x/lsp_signature.nvim'
 Plug 'RRethy/vim-illuminate'
 if (has('python') || has('python3'))
     Plug 'SirVer/ultisnips'
-    "Plug 'prabirshrestha/asyncomplete-ultisnips.vim'
-	Plug 'thomasfaingnaert/vim-lsp-snippets'
-	Plug 'thomasfaingnaert/vim-lsp-ultisnips'
+    Plug 'thomasfaingnaert/vim-lsp-snippets'
+    Plug 'thomasfaingnaert/vim-lsp-ultisnips'
 else
     Plug 'garbas/vim-snipmate'
     Plug 'MarcWeber/vim-addon-mw-utils' "required for snipmate
@@ -43,8 +39,8 @@ else
 endif
 Plug 'honza/vim-snippets'
 
-"call vundle#end()
 call plug#end()
+
 "syntax enable
 "filetype plugin indent on
 try
@@ -55,7 +51,7 @@ catch /^Vim\%((\a\+)\)\=:E185/
     set t_Co=16
     colo delek "This is the most bearable default colorscheme I've found (but only when colors are limited)
 endtry
-com! JSONFormat %!python3 -m json.tool
+"com! JSONFormat %!python3 -m json.tool    (`%!jq .` is a simpler alternative)
 runtime! macros/matchit.vim
 "omnifunc will be overridden by LSP completion function if present
 set omnifunc=syntaxcomplete#Complete
@@ -65,16 +61,17 @@ set timeoutlen=250
 set ttimeoutlen=10
 set wildmode=longest,list,full
 set wildmenu
-set completeopt=longest,menuone
+set completeopt=longest,menuone,noselect
 set backspace=indent,eol
 set tabstop=4
 set shiftwidth=4
 set nu
+set signcolumn=number
 set ruler
 set showtabline=2
 set laststatus=2
 set list
-set listchars=tab:\|\ ,trail:·,precedes:<,extends:>
+set listchars=tab:\|\ ,trail:·,precedes:<,extends:>,nbsp:+
 set virtualedit=block
 set splitright
 set splitbelow
@@ -84,6 +81,8 @@ set incsearch
 set inccommand=nosplit
 set showcmd
 set nostartofline
+set nohid
+set mouse=
 noremap <F1> <nop>
 noremap K <nop>
 "nn <silent> K :LspHover<CR>
@@ -91,8 +90,8 @@ noremap K <nop>
 "nn <silent> ]r :LspNextReference<CR>
 "nn <silent> [e :LspPreviousError<CR>
 "nn <silent> [r :LspPreviousReference<CR>
-nn <silent> ]r :lua require"illuminate".next_reference{wrap=true}<CR>
-nn <silent> [r :lua require"illuminate".next_reference{reverse=true,wrap=true}<CR>
+nn <silent> ]r :lua require"illuminate".goto_next_reference()<CR>
+nn <silent> [r :lua require"illuminate".goto_prev_reference()<CR>
 
 set pastetoggle=<F2>
 nn <Tab> gt
@@ -127,10 +126,6 @@ vn <Leader>J J
 " yanked, instead of always jumping to the top.
 vn y ygv
 
-"let g:Illuminate_insert_mode_highlight = 0  "this option doesn't appear to actually work...
-"Fortunately, a short delay reduces the desire to disable highlighing in insert mode.
-let g:Illuminate_delay = 500
-
 let g:AutoCloseProtectedRegions = ["Comment", "Character"]
 
 let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
@@ -160,6 +155,15 @@ let g:snipMate = { 'snippet_version' : 1 }
 "imap <c-n> <plug>(MUcompleteFwd)
 "imap <c-p> <plug>(MUcompleteBwd)
 
+source ~/.vim/dbext_settings.vim
+source ~/.vim/db_connections.vim
+xnoremap <expr> <Plug>(DBExe)     db#op_exec()
+nnoremap <expr> <Plug>(DBExe)     db#op_exec()
+nnoremap <expr> <Plug>(DBExeLine) db#op_exec() . '_'
+xmap <leader>db  <Plug>(DBExe)
+nmap <leader>db  <Plug>(DBExe)
+omap <leader>db  <Plug>(DBExe)
+nmap <leader>dbl <Plug>(DBExeLine)
 
 "Replacing this previous method with the one provided at :help last-position-jump
 """ Return the cursor to the position it was in when the buffer was last closed 
@@ -184,6 +188,20 @@ function! LastModified()
     call setpos('.', save_cursor)
   endif
 endfun
+
+"Credit: https://stackoverflow.com/a/30101152/5066751
+function! DeleteHiddenBuffers()
+  let tpbl=[]
+  let closed = 0
+  call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+  for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
+    if getbufvar(buf, '&mod') == 0
+      silent execute 'bwipeout' buf
+      let closed += 1
+    endif
+  endfor
+  echo "Closed ".closed." hidden buffers"
+endfunction
 
 if has("autocmd")
     if !exists("autocom_loaded")
@@ -227,3 +245,4 @@ endif
 "inoremap <silent> <expr> <CR> (pumvisible() ? "\<C-Y>" : "\<CR>")
 
 lua require('config')
+lua require('vim-illuminate-cfg')

@@ -1,6 +1,6 @@
 " Vim color file
 " Maintainer:   Daniel Hakimian <dhakimian@nwss.co>
-" Last Change:  2022-03-07
+" Last Change:  2023-02-10
 
 set t_Co=256
 highlight clear
@@ -100,11 +100,13 @@ else "bg == "dark"
    "hi   Type         cterm=None       ctermfg=46    ctermbg=None
     hi   Type         cterm=bold       ctermfg=40    ctermbg=None
    "hi   Pmenu        cterm=None       ctermfg=233   ctermbg=177
-    hi   Pmenu        cterm=None       ctermfg=233   ctermbg=141
-   "hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=189
-    hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=252
-    hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=139
-    hi   PmenuThumb   cterm=None       ctermfg=None  ctermbg=251
+   "hi   Pmenu        cterm=None       ctermfg=233   ctermbg=141
+    hi   Pmenu        cterm=None       ctermfg=16    ctermbg=111
+   "hi   PmenuSel     cterm=None       ctermfg=233   ctermbg=252
+    hi   PmenuSel     cterm=None       ctermfg=16    ctermbg=178
+   "hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=139
+    hi   PmenuSbar    cterm=None       ctermfg=None  ctermbg=243
+    hi   PmenuThumb   cterm=None       ctermfg=None  ctermbg=254
     hi   Function     cterm=None       ctermfg=135   ctermbg=None
     hi   Identifier   cterm=bold       ctermfg=38    ctermbg=None
     hi   Delimiter    cterm=None       ctermfg=214   ctermbg=None
@@ -131,7 +133,8 @@ else "bg == "dark"
     hi   ErrorMsg     cterm=bold       ctermfg=231   ctermbg=124
     hi   Error        cterm=None       ctermfg=231   ctermbg=196
     hi   Todo         cterm=None       ctermfg=16    ctermbg=231
-    hi   Search       cterm=None       ctermfg=None  ctermbg=226
+   "hi   Search       cterm=None       ctermfg=None  ctermbg=226
+    hi   Search       cterm=None       ctermfg=None  ctermbg=156
     hi   DiffAdd      cterm=None       ctermfg=None  ctermbg=22
     hi   DiffDelete   cterm=None       ctermfg=21    ctermbg=30
     hi   DiffChange   cterm=None       ctermfg=None  ctermbg=90
@@ -159,21 +162,37 @@ endif
 "------------------------
 
 "------ NeoVim builtin LSP highlight groups ------
-hi  LspReferenceText   cterm=underline  ctermfg=None  ctermbg=None
-hi  LspReferenceRead   cterm=underline  ctermfg=None  ctermbg=None
-hi  LspReferenceWrite  cterm=underline  ctermfg=None  ctermbg=235
-"hi LspSignatureActiveParameter cterm=None ctermfg=None ctermbg=189
-hi link LspSignatureActiveParameter PmenuSel
-
 "hi  DiagnosticError  ...
 hi  DiagnosticWarn   cterm=None  ctermfg=208  ctermbg=None
 "hi  DiagnosticHint   cterm=None  ctermfg=159  ctermbg=None
+hi  DiagnosticHint   cterm=None  ctermfg=Cyan  ctermbg=None
 "hi  DiagnosticInfo   ...
 hi  DiagnosticUnderlineError  cterm=None  ctermfg=231   ctermbg=196
-hi  DiagnosticUnderlineWarn   cterm=None  ctermfg=16    ctermbg=208
-hi  DiagnosticUnderlineHint   cterm=None  ctermfg=None  ctermbg=253
-"hi  DiagnosticUnderlineInfo
+"hi  DiagnosticUnderlineWarn   cterm=None  ctermfg=16    ctermbg=208
+hi  DiagnosticUnderlineWarn   cterm=undercurl  ctermfg=None  ctermbg=None  guisp=Orange
+"hi  DiagnosticUnderlineHint   cterm=None  ctermfg=None  ctermbg=253
+"hi  DiagnosticUnderlineHint   cterm=None  ctermfg=None  ctermbg=159
+hi  DiagnosticUnderlineHint   cterm=undercurl  ctermfg=None  ctermbg=None  guisp=Cyan
+hi  DiagnosticUnderlineInfo   cterm=undercurl  ctermfg=None  ctermbg=None  guisp=Blue
+
+hi  LspReferenceText   cterm=underline  ctermfg=None  ctermbg=None  gui=underline
+hi  LspReferenceRead   cterm=underline  ctermfg=None  ctermbg=None  gui=underline
+hi  LspReferenceWrite  cterm=underline  ctermfg=None  ctermbg=235   gui=underline
 "-------------------------------------------------
+"
+"------ LSP-related highlight groups from plugins ------
+"-- vim-illuminate --
+hi link IlluminatedWord       LspReferenceText
+hi link IlluminatedWordText   LspReferenceText
+hi link IlluminatedWordRead   LspReferenceRead
+hi link IlluminatedWordWrite  LspReferenceWrite
+"--------------------
+"-- lsp_signature.nvim --
+"hi LspSignatureActiveParameter cterm=None ctermfg=None ctermbg=189
+hi link LspSignatureActiveParameter PmenuSel
+"------------------------
+"-------------------------------------------------------
+
 
 " These are copied from after/syntax/php.vim, since changing the colorscheme
 " within a buffer clears these highlight groups and doesn't reset them
