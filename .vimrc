@@ -75,6 +75,7 @@ set listchars=tab:\|\ ,trail:·,precedes:<,extends:>,nbsp:+
 set virtualedit=block
 set splitright
 set splitbelow
+set nofileignorecase
 set ignorecase
 set smartcase
 set incsearch
@@ -216,8 +217,11 @@ if has("autocmd")
         au BufRead,BufNewFile *.rkt,*.rktl set filetype=racket
         au BufRead,BufNewFile *.pl6,*.p6 set filetype=perl6
         au BufRead,BufNewFile *.md set filetype=markdown
+        au BufRead,BufNewFile Dockerfile* set filetype=dockerfile
         let g:xml_syntax_folding=1
         au FileType xml setlocal foldmethod=syntax
+        au FileType qf nnoremap <buffer> <Leader><Enter> <C-W><Enter><C-W>T
+
 
         "Doing this through vim-illuminate instead
         "autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()
@@ -243,6 +247,21 @@ if has("autocmd")
 endif
 
 "inoremap <silent> <expr> <CR> (pumvisible() ? "\<C-Y>" : "\<CR>")
+
+
+""""lua print(#vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR }))
+""""lua =#vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+""""
+""""#vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR }) + #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN  })
+""""#vim.diagnostic.get(0, { severity = { min = vim.diagnostic.severity.WARN } })
+function DiagCount()
+	echohl DiagnosticError | echon "E:" | echohl None | echon luaeval('#vim.diagnostic.get(0, { severity=vim.diagnostic.severity.ERROR })')
+	echohl DiagnosticWarn | echon "  W:" | echohl None | echon luaeval('#vim.diagnostic.get(0, { severity=vim.diagnostic.severity.WARN })')
+	echohl DiagnosticHint | echon "  H:" | echohl None | echon luaeval('#vim.diagnostic.get(0, { severity=vim.diagnostic.severity.HINT })')
+	echohl DiagnosticInfo | echon "  I:" | echohl None | echon luaeval('#vim.diagnostic.get(0, { severity=vim.diagnostic.severity.INFO })')
+	"lua print("E:" .. (#vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })) .. " W:" .. (#vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })) .. " H:" .. (#vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })) ..  " I:" .. (#vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })))
+endfunction
+nn <Leader>dc :call DiagCount()<CR>
 
 lua require('config')
 lua require('vim-illuminate-cfg')

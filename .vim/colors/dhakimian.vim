@@ -1,6 +1,6 @@
 " Vim color file
 " Maintainer:   Daniel Hakimian <dhakimian@nwss.co>
-" Last Change:  2023-02-10
+" Last Change:  2024-01-18
 
 set t_Co=256
 highlight clear
@@ -148,17 +148,18 @@ endif
 " Select the lines in Visual mode and type this command:
 " :'<,'>!column -t
 
-" -- Highlight groups from old vim-lsp plugin. Keeping for reference of what colors I used --
-"" LSP highlighting (Same colors work for both light and dark schemes)
-"hi  LspReference         cterm=underline  ctermfg=None  ctermbg=None
-"hi  LspErrorHighlight    cterm=None       ctermfg=231   ctermbg=196
-"hi  LspErrorText         cterm=None       ctermfg=231   ctermbg=196
-"hi  LspWarningHighlight  cterm=None       ctermfg=16    ctermbg=208
-"hi  LspWarningText       cterm=None       ctermfg=16    ctermbg=208
-"hi  LspHintHighlight     cterm=None       ctermfg=None  ctermbg=159
-"hi  LspHintText          cterm=None       ctermfg=None  ctermbg=159
-""hi LspInformationHighlight
-""hi LspInformationText
+" -- Highlight groups for vim-lsp plugin; keeping them defined just in case I
+" -- want to use standard vim over nvim for something
+" LSP highlighting (Same colors work for both light and dark schemes)
+hi  LspReference         cterm=underline  ctermfg=None  ctermbg=None
+hi  LspErrorHighlight    cterm=None       ctermfg=231   ctermbg=196
+hi  LspErrorText         cterm=None       ctermfg=231   ctermbg=196
+hi  LspWarningHighlight  cterm=None       ctermfg=16    ctermbg=208
+hi  LspWarningText       cterm=None       ctermfg=16    ctermbg=208
+hi  LspHintHighlight     cterm=None       ctermfg=None  ctermbg=159
+hi  LspHintText          cterm=None       ctermfg=None  ctermbg=159
+"hi LspInformationHighlight
+"hi LspInformationText
 "------------------------
 
 "------ NeoVim builtin LSP highlight groups ------
@@ -177,7 +178,11 @@ hi  DiagnosticUnderlineInfo   cterm=undercurl  ctermfg=None  ctermbg=None  guisp
 
 hi  LspReferenceText   cterm=underline  ctermfg=None  ctermbg=None  gui=underline
 hi  LspReferenceRead   cterm=underline  ctermfg=None  ctermbg=None  gui=underline
-hi  LspReferenceWrite  cterm=underline  ctermfg=None  ctermbg=235   gui=underline
+if &bg == "light"
+    hi  LspReferenceWrite  cterm=underline  ctermfg=None  ctermbg=255   gui=underline
+else "bg == "dark"
+    hi  LspReferenceWrite  cterm=underline  ctermfg=None  ctermbg=235   gui=underline
+endif
 "-------------------------------------------------
 "
 "------ LSP-related highlight groups from plugins ------

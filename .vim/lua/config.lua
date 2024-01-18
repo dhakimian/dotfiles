@@ -11,6 +11,8 @@ local keymap_opts = { noremap=true, silent=true }
 vim.keymap.set('n', '<space>d', vim.diagnostic.open_float, keymap_opts)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, keymap_opts)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, keymap_opts)
+vim.keymap.set('n', '[e', '<cmd>lua vim.diagnostic.goto_prev({severity=vim.diagnostic.severity.ERROR})<CR>', keymap_opts)
+vim.keymap.set('n', ']e', '<cmd>lua vim.diagnostic.goto_next({severity=vim.diagnostic.severity.ERROR})<CR>', keymap_opts)
 vim.keymap.set('n', '<space>dl', vim.diagnostic.setloclist, keymap_opts)
 
 -- Use an on_attach function to only map the following keys
@@ -28,7 +30,7 @@ local on_attach = function(client, bufnr)
 			border = "none"   -- double, rounded, single, shadow, none
 		},
 		--auto_close_after = 2,  -- affects the manual floating window, not the automatic one...
-		toggle_key = '<C-l>'
+		toggle_key = '<C-l>' -- <C-k> in insert mode is already used for digraphs
 	}
 	require 'lsp_signature'.on_attach(lsp_sig_cfg, bufnr)
 
@@ -69,7 +71,10 @@ end
 -- Don't forget to update `filetypes_allowlist` in ~/.vim/lua/vim-illuminate-cfg.lua if adding a server.
 local servers = {
 	intelephense = { omni=true, settings = { intelephense = {
-		environment = { phpVersion = '7.4.33' }
+		environment = {
+			phpVersion = '7.4.33',
+			includePaths = { os.getenv('HOME') .. '/work/dev-includes/vendor/' }
+		}
 	} } },
 	bashls = { omni=true },
 	vimls = { omni=true },
